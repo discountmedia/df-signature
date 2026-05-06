@@ -8,8 +8,41 @@ interface Props {
   value: string | null;
   onChange: (dataUrl: string | null) => void;
   accentClass?: string;
-  /** When true the preview keeps native aspect (e.g. for reference cards). */
   keepAspect?: boolean;
+}
+
+const MAX_DIMENSION = 1600;
+const JPEG_QUALITY = 0.9;
+
+async function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+          const ratio = Math.min(MAX_DIMENSION / width, MAX_DIMENSION / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas context unavailable"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", JPEG_QUALITY));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 export function ImageUploader({
@@ -22,12 +55,21 @@ export function ImageUploader({
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleFile(file: File) {
+  async function handleFile(file: File) {
     if (!file.type.startsWith("image/")) return;
-    const reader = new FileReader();
-    reader.onload = () => onChange(typeof reader.result === "string" ? reader.result : null);
-    reader.readAsDataURL(file);
+    setError(null);
+    setProcessing(true);
+    try {
+      const compressed = await compressImage(file);
+      onChange(compressed);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to process image");
+    } finally {
+      setProcessing(false);
+    }
   }
 
   return (
@@ -72,8 +114,12 @@ export function ImageUploader({
           hover:border-df-orange hover:bg-df-orange/5
         `}
       >
-        {value ? (
-          // eslint-disable-next-line @next/next/no-img-element
+        {processing ? (
+          <div className="text-center px-4 py-8 text-neutral-400">
+            <div className="text-sm font-medium animate-pulse">Compressing…</div>
+          </div>
+        ) : value ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={value}
             alt={label}
@@ -97,6 +143,8 @@ export function ImageUploader({
           }}
         />
       </div>
+
+      {error && <p className="text-xs text-amber-400">{error}</p>}
     </div>
   );
 }
