@@ -1,3 +1,6 @@
+cd "C:\Users\skc\Documents\GitHub\df-signature"
+
+$clean = @'
 "use client";
 
 import React from "react";
@@ -30,7 +33,7 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
             accentClass="border-df-green"
           />
           <ImageUploader
-            label="② Reference Card *"
+            label="2. Reference Card *"
             description="An existing Discount Forklift card. Gemini will clone its design exactly."
             value={data.referenceDataUrl}
             onChange={(v) => update("referenceDataUrl", v)}
@@ -39,21 +42,21 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
           />
         </div>
         <p className="text-[11px] text-neutral-500 leading-relaxed">
-          <span className="text-df-cyan font-bold">*</span> The reference is the design template Ã¢â‚¬â€ without it, Gemini has nothing to clone.
+          <span className="text-df-cyan font-bold">*</span> The reference is the design template -- without it, Gemini has nothing to clone.
         </p>
       </Section>
 
-      {/* ============= HEADSHOT ENHANCEMENTS (always visible) ============= */}
+      {/* ============= HEADSHOT ENHANCEMENTS ============= */}
       <Section title="Headshot Enhancements">
         <Toggle
-          label="Add a natural smile"
-          description="Ask Gemini to give the person a warm, professional smile"
+          label="Add a big, genuine smile"
+          description="Ask Gemini to give the person a beaming, confident corporate-headshot smile (teeth showing)"
           checked={data.smileEnhancement}
           onChange={(v) => update("smileEnhancement", v)}
         />
-	<Toggle
+        <Toggle
           label="Make it an even BIGGER smile"
-          description="Ear-to-ear grin with lots of teeth — overrides the regular smile if both are on"
+          description="Ear-to-ear grin with lots of teeth -- overrides the regular smile if both are on"
           checked={data.biggerSmile}
           onChange={(v) => update("biggerSmile", v)}
         />
@@ -100,7 +103,7 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
               }
             `}
           >
-            {data.hablaEspanol ? "[x] Hablo Espanol -- VISIBLE" : "Add 'Hablo Espanol' line"}
+            {data.hablaEspanol ? "ON: Hablo Espanol line will appear" : "Add 'Hablo Espanol' line"}
           </button>
         </Field>
       </Section>
@@ -108,13 +111,13 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
       {/* ============= CONTACT INFO ============= */}
       <Section title="Contact">
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Cell">
+          <Field label="Cell (Direct Line in PRO)">
             <input
               type="text"
               value={data.cell}
               onChange={(e) => update("cell", e.target.value)}
               className={inputClass}
-              placeholder="720-457-3788"
+              placeholder="XXX-XXX-XXXX"
             />
           </Field>
           <Field label="Main">
@@ -247,7 +250,7 @@ function Toggle({
           ${checked ? "bg-df-orange border-df-orange" : "border-neutral-600"}
         `}
       >
-        {checked && <span className="text-black text-xs font-bold">Ã¢Å“â€œ</span>}
+        {checked && <span className="text-black text-xs font-bold">X</span>}
       </div>
       <div className="flex-1 min-w-0">
         <div className={`text-sm font-bold ${checked ? "text-df-orange" : "text-neutral-300"}`}>
@@ -258,3 +261,10 @@ function Toggle({
     </button>
   );
 }
+'@
+
+$abs = (Resolve-Path components/ControlPanel.tsx).Path
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText($abs, $clean, $utf8NoBom)
+
+Write-Host "OK ControlPanel.tsx rewritten cleanly" -ForegroundColor Green
