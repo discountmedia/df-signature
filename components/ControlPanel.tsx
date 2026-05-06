@@ -73,7 +73,7 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
             value={data.name}
             onChange={(e) => update("name", e.target.value)}
             className={inputClass}
-            placeholder="Consuelo MuÃƒÂ±oz"
+            placeholder="Employee First and Last Name"
           />
         </Field>
 
@@ -120,10 +120,9 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
           <Field label="Main">
             <input
               type="text"
-              value={data.main}
-              onChange={(e) => update("main", e.target.value)}
-              className={inputClass}
-              placeholder="877-779-9431"
+              value="877-779-9431"
+              readOnly
+              className={inputClass + " opacity-60 cursor-not-allowed"}
             />
           </Field>
         </div>
@@ -139,10 +138,9 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
         <Field label="Website">
           <input
             type="text"
-            value={data.website}
-            onChange={(e) => update("website", e.target.value)}
-            className={inputClass}
-            placeholder="www.DiscountForklift.us"
+            value="www.DiscountForklift.us"
+            readOnly
+            className={inputClass + " opacity-60 cursor-not-allowed"}
           />
         </Field>
       </Section>

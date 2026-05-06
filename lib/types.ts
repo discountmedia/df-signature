@@ -20,7 +20,7 @@ export const DEFAULT_EMPLOYEE: EmployeeData = {
   name: "",
   title: "",
   cell: "",
-  main: "",
+  main: "877-779-9431",
   email: "",
   website: "www.DiscountForklift.us",
   hablaEspanol: false,

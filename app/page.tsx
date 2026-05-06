@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { ControlPanel } from "@/components/ControlPanel";
 import { DEFAULT_EMPLOYEE, EmployeeData } from "@/lib/types";
 import { LOCATIONS } from "@/lib/addresses";
-
-const STORAGE_KEY = "df-signature-state-v2";
 
 type GenState =
   | { status: "idle" }
@@ -15,34 +13,7 @@ type GenState =
 
 export default function Home() {
   const [data, setData] = useState<EmployeeData>(DEFAULT_EMPLOYEE);
-  const [hydrated, setHydrated] = useState(false);
   const [gen, setGen] = useState<GenState>({ status: "idle" });
-
-  // Browser memory: persist text fields only; image data is too large for localStorage.
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as Partial<EmployeeData>;
-        setData((prev) => ({ ...prev, ...parsed }));
-      }
-    } catch {
-      /* ignore */
-    }
-    setHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    const { headshotDataUrl, referenceDataUrl, ...persistable } = data;
-    void headshotDataUrl;
-    void referenceDataUrl;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(persistable));
-    } catch {
-      /* quota / private mode */
-    }
-  }, [data, hydrated]);
 
   const canGenerate =
     !!data.headshotDataUrl &&
@@ -64,6 +35,7 @@ export default function Home() {
           title: data.title,
           hablaEspanol: data.hablaEspanol,
           smileEnhancement: data.smileEnhancement,
+          biggerSmile: data.biggerSmile,
           lightingEnhancement: data.lightingEnhancement,
           cell: data.cell,
           main: data.main,
@@ -97,11 +69,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
-      {/* Unmissable version banner — if you don't see this, you are on the WRONG build */}
-      <div className="bg-yellow-400 text-black text-center py-2 font-anton text-lg tracking-widest border-b-4 border-black">
-        ⚡ BUILD v2.2 · NO POLISH BUTTON · HEADSHOT TOGGLES VISIBLE · NO CYAN PROMPT ⚡
-      </div>
-
       <header className="border-b border-neutral-800 bg-black/80 backdrop-blur-sm sticky top-0 z-30">
         <div className="max-w-[1500px] mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -113,7 +80,7 @@ export default function Home() {
                 SIGNATURE CARD GENERATOR
               </h1>
               <p className="text-xs text-neutral-500 mt-1">
-                Discount Forklift · v2.1 (no polish button · always-on enhancement toggles)
+                Discount Forklift
               </p>
             </div>
           </div>
@@ -135,14 +102,13 @@ export default function Home() {
         </aside>
 
         <section className="space-y-8">
-          {/* RESULT */}
           <div>
             <SectionHeading
               eyebrow="Generated Card"
               title="Output"
               subtitle={
                 gen.status === "done"
-                  ? "Edited by Gemini · Click to download"
+                  ? "Edited by Gemini - Click to download"
                   : "Generated card will appear here"
               }
             />
@@ -162,14 +128,14 @@ export default function Home() {
                   />
                   <div className="p-3 bg-black border-t border-neutral-800 flex items-center justify-between">
                     <span className="text-xs text-neutral-500">
-                      {data.name || "Signature card"} · {LOCATIONS[data.location].city}
+                      {data.name || "Signature card"} - {LOCATIONS[data.location].city}
                     </span>
                     <button
                       type="button"
                       onClick={handleDownload}
                       className="px-4 py-2 bg-df-red hover:bg-df-red/90 text-white font-bold text-sm rounded-md transition-colors"
                     >
-                      ⬇ Download PNG
+                      Download PNG
                     </button>
                   </div>
                 </div>
@@ -177,7 +143,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* REFERENCE PREVIEW (Field 2) */}
           {data.referenceDataUrl && (
             <div>
               <SectionHeading
@@ -210,7 +175,6 @@ function EmptyState({ canGenerate, data }: { canGenerate: boolean; data: Employe
 
   return (
     <div className="text-center py-20 px-8">
-      <div className="text-6xl mb-4 opacity-30">🖼️</div>
       <p className="text-neutral-400 text-sm mb-3 max-w-md mx-auto">
         Upload a reference card and an employee headshot, fill in the details on the left, then click <span className="text-df-orange font-bold">Generate Card</span>.
       </p>
@@ -219,7 +183,7 @@ function EmptyState({ canGenerate, data }: { canGenerate: boolean; data: Employe
           <p className="text-xs text-neutral-500 mb-1.5 font-bold uppercase tracking-wide">Still needed:</p>
           <ul className="text-xs text-neutral-400 space-y-1">
             {missing.map((m) => (
-              <li key={m}>· {m}</li>
+              <li key={m}>- {m}</li>
             ))}
           </ul>
         </div>
@@ -237,7 +201,7 @@ function GeneratingState() {
         <span className="w-3 h-3 rounded-full bg-df-orange animate-pulse" style={{ animationDelay: "0.3s" }} />
       </div>
       <p className="font-anton text-xl text-white tracking-wider">GEMINI IS CLONING THE CARD</p>
-      <p className="text-xs text-neutral-500 mt-2">This typically takes 10–30 seconds.</p>
+      <p className="text-xs text-neutral-500 mt-2">This typically takes 10-30 seconds.</p>
     </div>
   );
 }
@@ -245,7 +209,6 @@ function GeneratingState() {
 function ErrorState({ message }: { message: string }) {
   return (
     <div className="text-center py-20 px-8 max-w-lg mx-auto">
-      <div className="text-5xl mb-4">⚠️</div>
       <p className="font-bold text-df-red mb-2">Generation failed</p>
       <p className="text-xs text-neutral-400 break-words bg-neutral-900/50 border border-neutral-800 rounded-md p-3 text-left">
         {message}
