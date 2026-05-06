@@ -23,14 +23,14 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
       <Section title="Source Images">
         <div className="grid grid-cols-2 gap-3">
           <ImageUploader
-            label="① Headshot"
+            label="Ã¢â€˜Â  Headshot"
             description="The new employee's photo. Replaces the circular photo on the card."
             value={data.headshotDataUrl}
             onChange={(v) => update("headshotDataUrl", v)}
             accentClass="border-df-green"
           />
           <ImageUploader
-            label="② Reference Card *"
+            label="Ã¢â€˜Â¡ Reference Card *"
             description="An existing Discount Forklift card. Gemini will clone its design exactly."
             value={data.referenceDataUrl}
             onChange={(v) => update("referenceDataUrl", v)}
@@ -39,7 +39,7 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
           />
         </div>
         <p className="text-[11px] text-neutral-500 leading-relaxed">
-          <span className="text-df-cyan font-bold">*</span> The reference is the design template — without it, Gemini has nothing to clone.
+          <span className="text-df-cyan font-bold">*</span> The reference is the design template Ã¢â‚¬â€ without it, Gemini has nothing to clone.
         </p>
       </Section>
 
@@ -50,6 +50,12 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
           description="Ask Gemini to give the person a warm, professional smile"
           checked={data.smileEnhancement}
           onChange={(v) => update("smileEnhancement", v)}
+        />
+	<Toggle
+          label="Make it an even BIGGER smile"
+          description="Ear-to-ear grin with lots of teeth — overrides the regular smile if both are on"
+          checked={data.biggerSmile}
+          onChange={(v) => update("biggerSmile", v)}
         />
         <Toggle
           label="Improve studio lighting"
@@ -67,7 +73,7 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
             value={data.name}
             onChange={(e) => update("name", e.target.value)}
             className={inputClass}
-            placeholder="Consuelo Muñoz"
+            placeholder="Consuelo MuÃƒÂ±oz"
           />
         </Field>
 
@@ -94,7 +100,7 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
               }
             `}
           >
-            {data.hablaEspanol ? "✓ Hablo Español — VISIBLE" : "Add 'Hablo Español' line"}
+            {data.hablaEspanol ? "Ã¢Å“â€œ Hablo EspaÃƒÂ±ol Ã¢â‚¬â€ VISIBLE" : "Add 'Hablo EspaÃƒÂ±ol' line"}
           </button>
         </Field>
       </Section>
@@ -177,7 +183,7 @@ export function ControlPanel({ data, onChange, onGenerate, generating, canGenera
         disabled={!canGenerate || generating}
         className="w-full py-5 bg-df-red hover:bg-df-red/90 disabled:bg-neutral-800 disabled:text-neutral-600 disabled:cursor-not-allowed text-white font-anton text-2xl tracking-widest rounded-md transition-all shadow-lg shadow-df-red/30 disabled:shadow-none"
       >
-        {generating ? "GENERATING…" : "✨ GENERATE CARD"}
+        {generating ? "GENERATINGÃ¢â‚¬Â¦" : "Ã¢Å“Â¨ GENERATE CARD"}
       </button>
       {!canGenerate && !generating && (
         <p className="text-xs text-neutral-500 text-center -mt-4">
@@ -243,7 +249,7 @@ function Toggle({
           ${checked ? "bg-df-orange border-df-orange" : "border-neutral-600"}
         `}
       >
-        {checked && <span className="text-black text-xs font-bold">✓</span>}
+        {checked && <span className="text-black text-xs font-bold">Ã¢Å“â€œ</span>}
       </div>
       <div className="flex-1 min-w-0">
         <div className={`text-sm font-bold ${checked ? "text-df-orange" : "text-neutral-300"}`}>
