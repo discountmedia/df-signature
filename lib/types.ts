@@ -8,15 +8,12 @@ export interface EmployeeData {
   email: string;
   website: string;
   hablaEspanol: boolean;
-  hablaEspanol: false,
   smileEnhancement: boolean;
-  smileEnhancement: false,
   biggerSmile: boolean;
-  biggerSmile: false,
   lightingEnhancement: boolean;
   location: LocationKey;
-  headshotDataUrl: string | null;     // Field 1
-  referenceDataUrl: string | null;    // Field 2 (template)
+  headshotDataUrl: string | null;
+  referenceDataUrl: string | null;
 }
 
 export const DEFAULT_EMPLOYEE: EmployeeData = {
@@ -28,6 +25,7 @@ export const DEFAULT_EMPLOYEE: EmployeeData = {
   website: "www.DiscountForklift.us",
   hablaEspanol: false,
   smileEnhancement: false,
+  biggerSmile: false,
   lightingEnhancement: false,
   location: "denver",
   headshotDataUrl: null,
